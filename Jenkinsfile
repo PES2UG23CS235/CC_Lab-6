@@ -23,7 +23,12 @@ pipeline {
                 sh '''
                 docker rm -f nginx-lb || true
                 docker run -d --name nginx-lb -p 80:80 nginx
-                docker cp nginx/nginx.conf nginx-lb:/etc/nginx/nginx.conf
+                sleep 2
+                if [ -f nginx/nginx.conf ]; then
+                    docker cp nginx/nginx.conf nginx-lb:/etc/nginx/conf.d/default.conf
+                elif [ -f nginx/default.conf ]; then
+                    docker cp nginx/default.conf nginx-lb:/etc/nginx/conf.d/default.conf
+                fi
                 docker exec nginx-lb nginx -s reload
                 '''
             }
@@ -38,4 +43,3 @@ pipeline {
         }
     }
 }
-
