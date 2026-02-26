@@ -22,8 +22,9 @@ pipeline {
             steps {
                 sh '''
                 docker rm -f nginx-lb || true
-                docker run -d --name nginx-lb -p 80:80 \
-                  -v $(pwd)/nginx/nginx.conf:/etc/nginx/nginx.conf:ro nginx
+                docker run -d --name nginx-lb -p 80:80 nginx
+                docker cp nginx/nginx.conf nginx-lb:/etc/nginx/nginx.conf
+                docker exec nginx-lb nginx -s reload
                 '''
             }
         }
@@ -37,3 +38,4 @@ pipeline {
         }
     }
 }
+
